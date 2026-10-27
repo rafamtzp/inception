@@ -9,7 +9,7 @@ services:
     volumes:
       - database:/var/lib/mysql #mount db to /var/lib/mysql in container
     environment:
-      MYSQL_ROOT_PASSOWRD_FILE: /run/secrets/db_root_password #docker takes secret file on host and mounts it to this path on container!
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/db_root_password #docker takes secret file on host and mounts it to this path on container!
       MYSQL_DATABASE: ${MYSQL_DATABASE}
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD_FILE: /run/secrets/db_password
@@ -19,7 +19,8 @@ services:
     restart: always
 
   php-fpm:
-    depends_on: mariadb
+    depends_on:
+      - mariadb
     #build:
     # context: requirements/wordpress
     image: wordpress:fpm
@@ -39,13 +40,16 @@ services:
     restart: always
     
   nginx:
-    depends_on: php-fpm
-    #build:
-    # context: requirements/nginx
-    image: nginx:latest
+    depends_on:
+      - php-fpm
+    build:
+     context: requirements/nginx
+    image: nginx:inception
     container_name: nginx
     networks:
       - inception-network
+    ports:
+      - "80:80"
     volumes:
       - wordpress:/var/www/html
     environment:

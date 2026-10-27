@@ -3,7 +3,7 @@ DATA_DIR = /home/$(USER)/data
 WORDPRESS_DIR = $(DATA_DIR)/wordpress
 MARIADB_DIR = $(DATA_DIR)/mariadb
 
-all: build up
+all: up #include 'build' later
 
 wordpress_dir:
 	mkdir -p $(WORDPRESS_DIR)
@@ -29,4 +29,4 @@ fclean: clean
 
 re: fclean all
 
-.PHONY all wordpress_dir mariadb_dir up down clean fclean re
+.PHONY: all wordpress_dir mariadb_dir up down clean fclean re
