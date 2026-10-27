@@ -29,7 +29,11 @@ services:
     volumes:
       - wordpress:/var/www/html
     environment:
-
+      WORDPRESS_DB_HOST: mariadb
+      WORDPRESS_DB_NAME: ${MYSQL_DATABASE}
+      WORDPRESS_DB_USER: ${MYSQL_USER}
+      WORDPRESS_DB_PASSWORD_FILE: /run/secrets/db_password
+      WORDPRESS_TABLE_PREFIX: wp_
     secrets:
       - db_password
     restart: always
