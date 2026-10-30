@@ -18,17 +18,17 @@ services:
       - db_password
     restart: always
 
-  php-fpm:
+  wordpress:
     depends_on:
       - mariadb
-    #build:
-    # context: requirements/wordpress
+    build:
+     context: requirements/wordpress
     image: wordpress:fpm
-    container_name: php-fpm
+    container_name: wordpress
     networks:
       - inception-network
     volumes:
-      - wordpress:/var/www/html
+      - wordpress_files:/var/www/html
     environment:
       WORDPRESS_DB_HOST: mariadb
       WORDPRESS_DB_NAME: ${MYSQL_DATABASE}
@@ -41,7 +41,7 @@ services:
     
   nginx:
     depends_on:
-      - php-fpm
+      - wordpress
     build:
      context: requirements/nginx
     image: nginx:inception
@@ -49,9 +49,9 @@ services:
     networks:
       - inception-network
     ports:
-      - "80:80"
+      - "443:443"
     volumes:
-      - wordpress:/var/www/html
+      - wordpress_files:/var/www/html
     environment:
       DOMAIN_NAME: ${DOMAIN_NAME}
     restart: always
@@ -68,7 +68,7 @@ volumes:
       o: bind
       device: /home/${USER}/data/mariadb
   
-  wordpress:
+  wordpress_files:
     driver: local #default driver, means volume lives in local filesystem
     driver_opts:
       type: none #no specialized filesystem.  Just a path.
