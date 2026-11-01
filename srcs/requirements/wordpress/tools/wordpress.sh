@@ -3,7 +3,7 @@ set -e
 
 # get passwords for configuration below
 DB_PASSWORD=$(cat /run/secrets/db_password)
-ADMIN_PASSWORD=$(grep WP_ADMIN_PASSWORD /run/secrets/credentials | cut -d '=' -f2-)
+ADMIN_PASSWORD=$(cat /run/secrets/wp_admin_password)
 WP_USER_PASSWORD=$(cat /run/secrets/wp_user_password)
 
 until mysqladmin ping -h mariadb -u"${MYSQL_USER}" -p"${DB_PASSWORD}" --silent; do
@@ -33,7 +33,7 @@ else
 		--path=/var/www/html \
 		"${WP_USER}" "${WP_USER_EMAIL}" \
 		--user_pass="${WP_USER_PASSWORD}"
-
+		
 
 
 
