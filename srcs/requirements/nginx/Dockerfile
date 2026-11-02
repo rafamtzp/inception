@@ -13,6 +13,6 @@ RUN chmod +x /usr/local/bin/nginx.sh
 
 EXPOSE 443
 
-ENTRYPOINT ["nginx.sh"]
+ENTRYPOINT ["/usr/local/bin/nginx.sh"]
 
 #Difference between CMD and ENTRYPOINT: CMD specifies the default command to be run but can be completely overriden by parameters passed on to docker run.  ENTRYPOINT on the other hand is a default command that can never be overriden without the --entrypoint flag in docker run and any arguments supplied to docker run are appended to this command.
