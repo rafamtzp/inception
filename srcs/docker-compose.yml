@@ -8,11 +8,8 @@ services:
       - inception-network
     volumes:
       - database:/var/lib/mysql #mount db to /var/lib/mysql in container
-    environment:
-      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/db_root_password #docker takes secret file on host and mounts it to this path on container!
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD_FILE: /run/secrets/db_password
+    env_file:
+      - .env
     secrets:
       - db_root_password
       - db_password
@@ -29,16 +26,8 @@ services:
       - inception-network
     volumes:
       - wordpress_files:/var/www/html
-    environment:
-      WP_DB_HOST: mariadb #TODO CHANGE ALL NAMES FROM 'WORDPRESS' TO 'WP'
-      WP_DB_NAME: ${MYSQL_DATABASE}
-      WP_DB_USER: ${MYSQL_USER}
-      WP_DB_PASSWORD_FILE: /run/secrets/db_password
-      WP_TABLE_PREFIX: wp_
-      WP_USER: ${WP_USER} # TO ADD
-      WP_ADMIN: ${WP_ADMIN} # TO ADD
-      WP_ADMIN_EMAIL: ${WP_ADMIN_EMAIL} # TO ADD
-      WP_USER_EMAIL: ${WP_USER_EMAIL} # TO ADD
+    env_file:
+      - .env
     secrets:
       - db_password
       - wp_admin_password
@@ -58,8 +47,8 @@ services:
       - "443:443"
     volumes:
       - wordpress_files:/var/www/html
-    environment:
-      DOMAIN_NAME: ${DOMAIN_NAME}
+    env_file:
+      - .env
     restart: always
 
 networks:
@@ -86,4 +75,7 @@ secrets:
     file: ../secrets/db_root_password.txt
   db_password:
     file: ../secrets/db_password.txt
-
+  wp_user_password:
+    file: ../secrets/wp_user_password.txt
+  wp_admin_password:
+    file: ../secrets/wp_admin_password.txt
