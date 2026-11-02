@@ -2,9 +2,9 @@
 set -e
 
 # get passwords for configuration below
-DB_PASSWORD=$(cat /run/secrets/db_password)
-ADMIN_PASSWORD=$(cat /run/secrets/wp_admin_password)
-WP_USER_PASSWORD=$(cat /run/secrets/wp_user_password)
+DB_PASSWORD=$(cat "${MYSQL_PASSWORD_FILE}")
+ADMIN_PASSWORD=$(cat "${WP_ADMIN_PASSWORD_FILE}")
+WP_USER_PASSWORD=$(cat "${WP_USER_PASSWORD_FILE}")
 
 # check database works (I'm scared of infinite loops...)
 until mysqladmin ping -h mariadb -u"${MYSQL_USER}" -p"${DB_PASSWORD}" --silent; do
