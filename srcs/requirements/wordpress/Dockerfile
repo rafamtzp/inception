@@ -1,15 +1,25 @@
 FROM debian:bookworm
 
+# php-fpm
+# php-mysql  lets PHP connect to db
+# php-curl  used by wp for http requests
+# php-gd  needed to handle images, text, and feeds
+# php-mbstring 
+# php-xml 
+# php-zip  needed to install plugins/themes packaged as .zip
+# curl  for downloading WP-CLI later
+# mariadb-client  provides mysqladmin/mysql to check DB readiness
+
 RUN apt-get update && apt-get install -y \
  	php-fpm \
-	php-mysql \ # lets PHP connect to db
-	php-curl \ # used by wp for http requests
-	php-gd \ # needed to handle images, text, and feeds
+	php-mysql \
+	php-curl \
+	php-gd \
 	php-mbstring \
 	php-xml \
-	php-zip \ # needed to install plugins/themes packaged as .zip
-	curl \ # for downloading WP-CLI later
-	mariadb-client \ # provides mysqladmin/mysql to check DB readiness
+	php-zip \
+	curl \
+	mariadb-client \
 	&& rm -rf /var/lib/apt/lists/*
 
 # Install wordpress CLI (needed to install and configure wordpress via commands)
@@ -21,6 +31,8 @@ COPY conf/www.conf /etc/php/8.2/fpm/pool.d/www.conf
 
 # copy over script
 COPY tools/wordpress.sh /usr/local/bin/wordpress.sh
+
+RUN chmod +x /usr/local/bin/wordpress.sh
 
 #document port
 EXPOSE 9000

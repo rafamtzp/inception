@@ -1,8 +1,8 @@
 services:
   mariadb:
-    #build:
-    # context: requirements/mariadb
-    image: mariadb:latest #change later
+    build:
+     context: requirements/mariadb
+    image: mariadb:inception
     container_name: mariadb
     networks:
       - inception-network
@@ -20,7 +20,7 @@ services:
       - mariadb
     build:
      context: requirements/wordpress
-    image: wordpress:fpm
+    image: wordpress:inception
     container_name: wordpress
     networks:
       - inception-network
