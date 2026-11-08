@@ -5,6 +5,14 @@ MARIADB_DIR = $(DATA_DIR)/mariadb
 
 all: build up
 
+secrets:
+	mkdir -p secrets
+	touch secrets/db_password.txt \
+	secrets/db_root_password.txt \
+	secrets/wp_admin_password.txt \
+	secrets/wp_user_password.txt
+
+
 logs:
 	docker compose -f $(COMPOSE_FILE) logs
 
@@ -18,7 +26,7 @@ cleandata:
 build: dirs
 	docker compose -f $(COMPOSE_FILE) build
 
-up:
+up: dirs
 	docker compose -f $(COMPOSE_FILE) up -d
 
 down:
@@ -34,4 +42,4 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all dirs cleandata logs build up down clean fclean re
+.PHONY: all dirs cleandata secrets logs build up down clean fclean re

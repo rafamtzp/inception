@@ -5,19 +5,19 @@ set -e
 
 # get passwords for configuration below
 DB_PASSWORD=$(cat "${MYSQL_PASSWORD_FILE}")
-ADMIN_PASSWORD=$(cat "${WP_ADMIN_PASSWORD_FILE}")
+WP_ADMIN_PASSWORD=$(cat "${WP_ADMIN_PASSWORD_FILE}")
 WP_USER_PASSWORD=$(cat "${WP_USER_PASSWORD_FILE}")
 
-# check database works (I'm scared of infinite loops...)
-#until mysqladmin ping -h mariadb -u"${MYSQL_USER}" -p"${DB_PASSWORD}" --silent; do
-#    sleep 1
-#done
+#check database works (I'm scared of infinite loops...)
+until mysqladmin ping -h mariadb -u"${MYSQL_USER}" -p"${DB_PASSWORD}" --silent; do
+    sleep 1
+done
 
 # create wp config
 if [ ! -f "/var/www/html/wp-config.php" ]; then
     echo "wp-config.php not found, downloading and configuring WordPress..."
         wp core download --path=/var/www/html --allow-root
-
+	echo "DEBUG: core downloaded"
         wp config create \
         --path=/var/www/html \
         --dbname="${MYSQL_DATABASE}" \
@@ -25,6 +25,7 @@ if [ ! -f "/var/www/html/wp-config.php" ]; then
         --dbpass="${DB_PASSWORD}" \
         --dbhost=mariadb \
         --allow-root
+	echo "DEBUG: config created"
 else
     echo "wp-config.php already exists, skipping download and config."
 fi
@@ -34,6 +35,8 @@ if wp user get "${WP_ADMIN}" --path=/var/www/html --allow-root > /dev/null 2>&1;
     echo "Admin user already exists.  Skipping wp core install."
 else
     echo "Admin user not found, running wp install..."
+    echo "Admin password: ${WP_ADMIN_PASSWORD}"
+    echo "Admin email: ${WP_ADMIN_EMAIL}"
     wp core install \
         --path=/var/www/html \
         --url="https://${DOMAIN_NAME}" \

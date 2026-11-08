@@ -2,7 +2,7 @@ FROM debian:bookworm
 
 RUN apt-get update && apt-get install -y \
     mariadb-server \
-    && rm -rf /var/lib/mysqld/* \
+    && rm -rf /var/lib/mysql/* \
     && rm -rf /var/lib/apt/lists/*
 
 # /var/lib/mysql/* is removed bc the package's post-install script creates data in this folder which gets copied to our named volume by Docker and makes our script think the database is already initialized.

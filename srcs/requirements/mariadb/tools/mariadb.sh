@@ -4,10 +4,12 @@
 set -e
 
 mkdir -p /run/mysqld
-chown mysql:mysql /run/mysqld
+chown -R mysql:mysql /run/mysqld
 
+echo "DEBUG: Hello, I am inside the script"
 # if this directory was not created then it's the first startup of mariadb.
 if [ ! -d "/var/lib/mysql/mysql" ]; then
+    echo "DEBUG: went into conditional"
     # first startup of background server to initialize everything
     mariadb-install-db --user=mysql --datadir=/var/lib/mysql
     #mysqld_safe is a wrapper script mariadb provides to start mysqld with extra safety precautions. The '&' in bash tells Linux to run that command in the background asynchronously
@@ -17,7 +19,7 @@ if [ ! -d "/var/lib/mysql/mysql" ]; then
     until mysqladmin ping --silent; do
         sleep 1
     done
-
+    echo "DEBUG: done checking connection"
     DB_ROOT_PASSWORD=$(cat "${MYSQL_ROOT_PASSWORD_FILE}")
     DB_PASSWORD=$(cat "${MYSQL_PASSWORD_FILE}")
 
@@ -37,4 +39,4 @@ fi
 
 # start actual mariadb process in the foreground as PID 1
 # config file should be used to set any needed parameters
-exec mysqld --user=mysqld --datadir=/var/lib/mysql
+exec mysqld --user=mysql --datadir=/var/lib/mysql
