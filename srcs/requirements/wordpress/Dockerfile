@@ -4,8 +4,8 @@ FROM debian:bookworm
 # php-mysql  lets PHP connect to db
 # php-curl  used by wp for http requests
 # php-gd  needed to handle images, text, and feeds
-# php-mbstring 
-# php-xml 
+# php-mbstring handles multi-byte character encodings
+# php-xml parses XML for feeds, site health and APIs
 # php-zip  needed to install plugins/themes packaged as .zip
 # curl  for downloading WP-CLI later
 # mariadb-client  provides mysqladmin/mysql to check DB readiness

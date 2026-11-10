@@ -8,35 +8,35 @@ DB_PASSWORD=$(cat "${MYSQL_PASSWORD_FILE}")
 WP_ADMIN_PASSWORD=$(cat "${WP_ADMIN_PASSWORD_FILE}")
 WP_USER_PASSWORD=$(cat "${WP_USER_PASSWORD_FILE}")
 
-#check database works (I'm scared of infinite loops...)
+echo "SCRIPT MSG: checking connection to database..."
+#check database works
 until mysqladmin ping -h mariadb -u"${MYSQL_USER}" -p"${DB_PASSWORD}" --silent; do
     sleep 1
 done
+echo "SCRIPT MSG: connection to database established."
 
 # create wp config
 if [ ! -f "/var/www/html/wp-config.php" ]; then
-    echo "wp-config.php not found, downloading and configuring WordPress..."
+    echo "SCRIPT MSG: wp-config.php not found, downloading and configuring WordPress..."
         wp core download --path=/var/www/html --allow-root
-	echo "DEBUG: core downloaded"
+	echo "SCRIPT MSG: core downloaded"
         wp config create \
         --path=/var/www/html \
         --dbname="${MYSQL_DATABASE}" \
         --dbuser="${MYSQL_USER}" \
         --dbpass="${DB_PASSWORD}" \
         --dbhost=mariadb \
-        --allow-root
-	echo "DEBUG: config created"
+        --allow-root # Need root privileges for running these setup scripts and configuring stuff.
+	echo "SCRIPT MSG: config created"
 else
-    echo "wp-config.php already exists, skipping download and config."
+    echo "SCRIPT MSG: wp-config.php already exists, skipping download and config."
 fi
 
 # Install wordpress and create admin
 if wp user get "${WP_ADMIN}" --path=/var/www/html --allow-root > /dev/null 2>&1; then
-    echo "Admin user already exists.  Skipping wp core install."
+    echo "SCRIPT MSG: Admin user already exists.  Skipping wp core install."
 else
-    echo "Admin user not found, running wp install..."
-    echo "Admin password: ${WP_ADMIN_PASSWORD}"
-    echo "Admin email: ${WP_ADMIN_EMAIL}"
+    echo "SCRIPT MSG: Admin user not found, running wp core install..."
     wp core install \
         --path=/var/www/html \
         --url="https://${DOMAIN_NAME}" \
@@ -49,7 +49,7 @@ else
     if wp user get "${WP_ADMIN}" --path=/var/www/html --allow-root > /dev/null 2>&1; then
         echo "Admin user created successfully."
     else
-        echo "ERROR: failed to create admin. Aborting."
+        echo "SCRIPT ERROR: failed to create admin. Aborting."
         exit 1
     fi
 fi
@@ -57,9 +57,9 @@ fi
 # Create wp user
 # Gets user and sends any outputs to /dev/null including errors. 
 if wp user get "${WP_USER}" --path=/var/www/html --allow-root > /dev/null 2>&1; then
-    echo "second user already exists, skipping wp user create."
+    echo "SCRIPT MSG: Second user already exists, skipping wp user create."
 else
-    echo "Second user not found, creating..."
+    echo "SCRIPT MSG: Second user not found, creating..."
     wp user create \
         --path=/var/www/html \
         "${WP_USER}" "${WP_USER_EMAIL}" \
@@ -68,7 +68,7 @@ else
         --allow-root
 
     if wp user get "${WP_USER}" --path=/var/www/html --allow-root > /dev/null 2>&1; then
-        echo "Second user created and verified successfully."
+        echo "SCRIPT MSG: Second user created and verified successfully."
     else
         echo "ERROR: second user was not created correctly. Aborting."
         exit 1

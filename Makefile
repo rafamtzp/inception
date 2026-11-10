@@ -7,9 +7,9 @@ all: build up
 
 secrets:
 	mkdir -p secrets
-	touch secrets/db_password.txt \
-	secrets/db_root_password.txt \
-	secrets/wp_admin_password.txt \
+	touch secrets/db_password.txt
+	secrets/db_root_password.txt
+	secrets/wp_admin_password.txt
 	secrets/wp_user_password.txt
 
 

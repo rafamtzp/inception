@@ -7,6 +7,8 @@ RUN apt-get update && apt-get install -y \
 
 # /var/lib/mysql/* is removed bc the package's post-install script creates data in this folder which gets copied to our named volume by Docker and makes our script think the database is already initialized.
 
+# /var/run/mysqld is where the UNIX socket file is stored
+# We let others have read and execute permissions to access socket + other stuff
 RUN mkdir -p /var/run/mysqld \
     && chown -R mysql:mysql /var/run/mysqld \
     && chmod 755 /var/run/mysqld
