@@ -8,9 +8,9 @@ all: build up
 secrets:
 	mkdir -p secrets
 	touch secrets/db_password.txt
-	secrets/db_root_password.txt
-	secrets/wp_admin_password.txt
-	secrets/wp_user_password.txt
+	touch secrets/db_root_password.txt
+	touch secrets/wp_admin_password.txt
+	touch secrets/wp_user_password.txt
 
 
 logs:
@@ -32,13 +32,11 @@ up: dirs
 down:
 	docker compose -f $(COMPOSE_FILE) down
 
-clean:
-	docker compose -f $(COMPOSE_FILE) down -v
+clean: down
 	docker system prune -af #deletes all unused images.  Not just dangling ones
-
-fclean: clean
 	docker volume prune -f
-	sudo rm -rf $(DATA_DIR)
+
+fclean: clean cleandata
 
 re: fclean all
 

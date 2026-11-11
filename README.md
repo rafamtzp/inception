@@ -83,6 +83,7 @@ You do this (if I remember correctly) by pasting the following line at the top o
 
 ### Resources
 * [Official Docker Documentation](https://docs.docker.com/)
+* [Docker Networks] (https://docs.docker.com/engine/network/)
 * [Docker Compose File Reference](https://docs.docker.com/reference/compose-file/)
 * [Dockerfile Reference](https://docs.docker.com/reference/dockerfile/)
 * [Docker Secrets](https://docs.docker.com/engine/swarm/secrets/)
@@ -99,7 +100,8 @@ During the development of this project, AI was utilized as a learning tool and d
 
 * **Explaining Docker fundamentals and how Docker Compose works,
 * **Explaining what certain lines in Dockerfiles, configs, and scripts do,
-* **Syntax and Configuration Troubleshooting:** Identifying mostly syntax errors in configuration files and scripts.
+* **Syntax and Configuration Troubleshooting:** Identifying mostly syntax errors in configuration files and scripts,
+* **Documentation assistant.
 
 Note: Every line of code and configuration in this project was manually written by the author using various technical references. AI was used strictly as an explanatory and debugging assistant. All comments, structural decisions, and troubleshooting efforts (including isolating and narrowing down errors) were driven independently by the author.
 
