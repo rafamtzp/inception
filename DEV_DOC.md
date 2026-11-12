@@ -3,14 +3,19 @@
 ## Set Up Environment from Scratch (prerequisites, configuration files, secrets)
 
 ### 1. Prerequisites
-Ensure the host machine (Debian/Ubuntu-based OS recommended) has the following packages installed:
+A Debian/Ubuntu-based OS is recommended.  I used Ubuntu 24.04 LTS when developing this project.
+
+Ensure the host machine has the following packages installed:
 * **Docker Engine** (`docker.io` or official Docker repository)
 * **Docker Compose** plugin (`docker-compose-v2` or `docker compose` CLI support)
 * **Make** build automation utility
 * Sudo utility (normally included)
 
+[Instructions for Ubuntu](https://docs.docker.com/engine/install/ubuntu/)
+
 Make sure your current user is added to the `docker` group so Docker commands can be run without `sudo`:
-```bash
+```
+newgrp docker
 sudo usermod -aG docker $USER
 ```
 ### 2. Create Secrets Folder
