@@ -1,16 +1,12 @@
----
-
 *This project has been created as part of the 42 curriculum by ramarti2.*
 
 # Inception
-
----
 
 ## Description
 
 **Inception** is a system administration project that introduces containerization using Docker. The goal of this project is to build a secure, multi-container infrastructure from scratch using custom Dockerfiles and Docker Compose, ensuring strict adherence to system administration best practices and container isolation rules.
 
-The stack consists of three core services running on a custom Docker network (`inception-network`):
+The stack consists of three core services running on a custom Docker network (inception-network):
 1. **Nginx:** Acts as the single entry point for the infrastructure, handling incoming HTTPS traffic securely via TLSv1.3 and proxying PHP requests to WordPress.
 2. **WordPress + PHP-FPM:** A modern WordPress installation managed via WP-CLI, communicating with PHP-FPM over TCP port 9000.
 3. **MariaDB:** A dedicated relational database backend configured with custom user permissions, persistent host-bound data directories, and secure credential handling via Docker secrets.
@@ -24,12 +20,12 @@ The stack consists of three core services running on a custom Docker network (`i
 * Sudo privileges (required for managing file permissions on host bind-mount volumes).
 
 ### Configuration
-The project comes with a `Makefile` at the root directory to automate building and managing the infrastructure.
+The project comes with a Makefile at the root directory to automate building and managing the infrastructure.
 
 Run the following command in the terminal
-  ```bash
-  make secrets
-  ```
+```
+make secrets
+```
 This will create the `secrets/` directory and the files where you should type the passwords you want to use.  You have
    * `secrets/db_password.txt` for your database password,
    * `secrets/db_root_password.txt` for your root database user's password,
@@ -38,41 +34,26 @@ This will create the `secrets/` directory and the files where you should type th
 
 You must fill these in yourself.  No sensitive passwords are included in this repository.
 
-IMPORTANT: There is a `.env` file in `srcs/` which contains values for usernames, emails, password file paths, etc. Make sure to replace some of these placeholder (working) values with your desired values.  No passwords or sensitive credentials are contained in this .env.
+IMPORTANT: There is a `.env.example` file in `srcs/` which contains necessary environment variables for the domain name, usernames, emails, password file paths, etc. Make sure to fill in the username, email, and domain name variables with your desired values.  No passwords, emails, or usernames are contained in this .env for security reasons.  Then rename the file to `.env` or copy everything over to a new `.env` file.
 
 ### Execution
-* **Build and start the stack:**
-  ```bash
-  make
-
+You can use any of these commands in the terminal to get started.
 ```
-* **Start (or restart) an already-built Stack
-```bash
-make up
+make # Build and start the stack
+
+make up # Start (or restart) an already-built stack
+
+make down # Stop the stack
+
+make clean # Stop the stack and clean images and volumes
+
+make fclean # Stops everything, cleans everything, and deletes data/
 ```
-
-* **Stop the stack:**
-```bash
-make down
-
-```
-
-* **Clean containers and networks:**
-```bash
-make clean
-
-```
-
-* **Complete teardown (destroys containers, images, volumes, and data directories):**
-```bash
-make fclean
-
-```
-There are more commands you can use with `make` such as `logs` to view the Docker Compose logs, `dirs` to just create the data directories, `cleandata` to delete the directories, `build` to only build the images and create directories, and `re` to tear down and rebuild everything. 
+To see explanations for the rest of the make commands, see DEV_DOC.md.
 
 Once running, you can access your site by adding your domain (e.g., `ramarti.42.fr`) to your local `/etc/hosts` file mapped to `127.0.0.1`, and navigating to `https://ramarti.42.fr` in your browser.
 
-You do this (if I remember correctly) by pasting the following line at the top of the `/etc/hosts` file:
+You do this by pasting the following line at the top of the `/etc/hosts` file:
 ```
 127.0.0.1 ramarti2.42.fr
 ```
@@ -83,7 +64,7 @@ You do this (if I remember correctly) by pasting the following line at the top o
 
 ### Resources
 * [Official Docker Documentation](https://docs.docker.com/)
-* [Docker Networks] (https://docs.docker.com/engine/network/)
+* [Docker Networks](https://docs.docker.com/engine/network/)
 * [Docker Compose File Reference](https://docs.docker.com/reference/compose-file/)
 * [Dockerfile Reference](https://docs.docker.com/reference/dockerfile/)
 * [Docker Secrets](https://docs.docker.com/engine/swarm/secrets/)
@@ -98,10 +79,10 @@ You do this (if I remember correctly) by pasting the following line at the top o
 
 During the development of this project, AI was utilized as a learning tool and debugging assistant.  In particular, it was really helpful in
 
-* **Explaining Docker fundamentals and how Docker Compose works,
-* **Explaining what certain lines in Dockerfiles, configs, and scripts do,
-* **Syntax and Configuration Troubleshooting:** Identifying mostly syntax errors in configuration files and scripts,
-* **Documentation assistant.
+* Explaining Docker fundamentals and how Docker Compose works,
+* Explaining what certain lines in Dockerfiles, configs, and scripts do,
+* Syntax and Configuration Troubleshooting: Identifying mostly syntax errors in configuration files and scripts,
+* Documentation assistant.
 
 Note: Every line of code and configuration in this project was manually written by the author using various technical references. AI was used strictly as an explanatory and debugging assistant. All comments, structural decisions, and troubleshooting efforts (including isolating and narrowing down errors) were driven independently by the author.
 
@@ -146,22 +127,26 @@ Note: Every line of code and configuration in this project was manually written 
 ```
 
 ### Main Design Choices
+#### 1. Multi-Container Service Isolation (LEMP Stack) 
 
-#### 1. Multi-Container Service Isolation (LEMP Stack)
 Rather than packing Nginx, PHP-FPM, WordPress, and MariaDB into a single monolithic container, the architecture separates each service into its own dedicated container (`nginx`, `wordpress + PHP-FPM`, `mariadb`). 
-* **Why:** This mirrors real-world microservice and containerization best practices, ensuring each container has a single responsibility, independent lifecycle management, and isolated resource utilization.
+
+**Why:** This mirrors real-world microservice and containerization best practices, ensuring each container has a single responsibility, independent lifecycle management, and isolated resource utilization.
 
 #### 2. Persistent Storage via Named Volumes
 To satisfy data persistence requirements, Docker named volumes mapped to host directories (`/home/${USER}/data/mariadb` and `/home/${USER}/data/wordpress`) were used.  The first named volume is the MariaDB database where WordPress stores all its data (posts, profiles, usernames, passwords, etc.) and the second volume is used to store all the WordPress files.
-* **Why:** This ensures that database records and WordPress files survive container teardowns, reboots, or updates without risking data loss.  Mapping them to host directories allows us to easily access the data and files from the host.
+
+**Why:** This ensures that database records and WordPress files survive container teardowns, reboots, or updates without risking data loss.  Mapping them to host directories allows us to easily access the data and files from the host.
 
 #### 3. Pragmatic Script Integration & Adaptation
 During development, various deployment patterns and community guides were evaluated. A conscious choice was made to discard overly complex or bloated bootstrap scripts in favor of lean, readable shell scripts that execute health checks (like MariaDB `until` loops) before launching services.
-* **Why:** Keeps the container boot sequence deterministic, transparent, and easy to debug during evaluation.
+
+**Why:** Keeps the container boot sequence deterministic, transparent, and easy to debug during evaluation.
 
 #### 4. Developer Experience & Workflow Automation (Makefile)
 A custom `Makefile` was implemented to wrap complex Docker Compose commands (`docker compose up --build`, log streaming, pruning, and directory creation).
-* **Why:** Reduces human error, speeds up common workflows, and ensures mandatory prerequisite directories (like `/home/${USER}/data/...`) are automatically set up before container initialization.
+
+**Why:** Reduces human error, speeds up common workflows, and ensures mandatory prerequisite directories (like `/home/${USER}/data/...`) are automatically set up before container initialization.
 
 ### Virtual Machines vs Docker
 A container can almost be thought of as a mini virtual machine though it has key differences.  In particular, virtual machines each have their own OS installed on them each with its own kernel and they only share hardware with each other.  Containers on the other hand share a single linux kernel but may have different user spaces (package managers, system libraries, shell utilities, system architecture, etc.  Basically everything else that differentiates one linux distribution from another).  This way you could have a container for an app that only works on Ubuntu linux and another that works on Alpine linux on the same computer, for example.  Containers are therefore a lot lighter than a virtual machine in terms of size and startup time.
@@ -171,6 +156,8 @@ After deploying several Docker containers, you may find that each one of them re
 
 In the docker-compose.yml file you can then declare each of these password files as secrets.  For each secret, you provide its file path (e.g. `../secrets/db_password.txt`) so that Docker can automatically copy them to `/run/secrets/` inside each container that needs them.
 
+We also decided not to publish environment variables with usernames or emails for good practice but keeping passwords secret is more important.
+
 ### Docker Network vs Host Network
 When establishing a network for your containers with Docker, you can determine how the network behaves by choosing between different drivers.  There are many kinds but the default and most common network driver is the 'bridge' driver.  The bridge driver provides network isolation for these containers which means that only the containers themselves can talk to each other whereas the host cannot unless you publish a container's port to the host.
 
@@ -179,10 +166,8 @@ There are two different kinds of bridge networks, the default bridge and a custo
 There is also the host network driver which although it allows for better performance and the ability to handle a large range of ports, it provides no isolation from the host machine which can be less secure.  If a container's application listens on port 80, the host will be able to directly talk to it via the host's IP without needing to publish the container's port.  This could result in unwanted access to a container and hence is the reason we chose a custom bridge network to have NGINX be the only access point.
 
 ### Docker Volumes vs Bind Mounts
-1. **Bind mount:** A file or directory in the host machine that is mounted to a container.  This file or directory can live anywhere on your host machine and any manual changes you make to it will be updated inside the container.  Good for changing source code that you want to run inside your container without having to rebuild the image.  These are good for development but they're NOT portable since their creation depends on your host's specific directory structure.
+**Bind mount:** A file or directory in the host machine that is mounted to a container.  This file or directory can live anywhere on your host machine and any manual changes you make to it will be updated inside the container.  Good for changing source code that you want to run inside your container without having to rebuild the image.  These are good for development but they're NOT portable since their creation depends on your host's specific directory structure.
 
-2. **Named volume:** A managed volume that is created and managed by Docker in its own specific folder in the host machine e.g. /var/lib/docker/volumes/... . It is managed via CLI commands (docker volume create, docker volume ls, etc.).  These are useful for storing data that needs to be shared between containers since they can be easily attached/detached.
+**Named volume:** A managed volume that is created and managed by Docker in its own specific folder in the host machine e.g. /var/lib/docker/volumes/... . It is managed via CLI commands (docker volume create, docker volume ls, etc.).  These are useful for storing data that needs to be shared between containers since they can be easily attached/detached.
 
 In this project, we used named volumes mounted to host directories so that deleting the Docker volumes preserves the actual data on the host as an additional safety mechanism and for neat organization in docker-compose.yml (since they are named).
-
-
