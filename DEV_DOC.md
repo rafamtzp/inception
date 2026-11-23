@@ -33,7 +33,7 @@ wp_user_password.txt - password for WordPress user
 wp_admin_password.txt - password for WordPress admin
 ```
 ### 3. Create .env File for Environment Variables
-These services require environment variables inside `srcs/.env/`.  There is a `.env.example` file which contains most of the required environment variables filled in.  However, we decided in the end to leave it up to the user of this repository to fill in their own usernames and emails for security reasons.
+These services require environment variables inside `srcs/.env/`.  There is a `example.env` file which contains the required environment variables filled in with fake values that work.  We suggest you substitute the usernames and emails for your own but these are perfectly usable.
 
 IMPORTANT: After filling in your desired values, rename the file to `.env` or copy everything over to a `.env` file in `srcs/`.
 

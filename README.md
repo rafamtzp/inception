@@ -62,7 +62,7 @@ You do this by pasting the following line at the top of the `/etc/hosts` file:
 
 ## Resources & AI Usage
 
-### Resources
+### Documentation
 * [Official Docker Documentation](https://docs.docker.com/)
 * [Docker Networks](https://docs.docker.com/engine/network/)
 * [Docker Compose File Reference](https://docs.docker.com/reference/compose-file/)
@@ -73,7 +73,13 @@ You do this by pasting the following line at the top of the `/etc/hosts` file:
 * [NGINX FastCGI Module](https://nginx.org/en/docs/http/ngx_http_fastcgi_module.html)
 * [WordPress CLI Commands](https://developer.wordpress.org/cli/commands/)
 * [openssl Docs](https://docs.openssl.org/master/man1/openssl-req/#options)
+
+### Helpful Guides
 * [Inception Conceptual Guide](https://devabdilah.medium.com/inception-42-a-comprehensive-guide-to-dockerizing-your-first-infrastructure-part-iii-a10e93e9d922)
+* [LEMP Stack Tutorial](https://medium.com/swlh/wordpress-deployment-with-nginx-php-fpm-and-mariadb-using-docker-compose-55f59e5c1a)
+* [Inception Tutorial](https://dev.to/alejiri/docker-nginx-wordpress-mariadb-tutorial-inception42-1eok)
+* [Born2BeRoot Guide - How To Use SSH](https://noreply.gitbook.io/born2beroot/virtual-machine-setup/installing-and-configuring-ssh/connecting-via-ssh)
+
 
 ### AI Usage Disclosure
 
@@ -171,3 +177,8 @@ There is also the host network driver which although it allows for better perfor
 **Named volume:** A managed volume that is created and managed by Docker in its own specific folder in the host machine e.g. /var/lib/docker/volumes/... . It is managed via CLI commands (docker volume create, docker volume ls, etc.).  These are useful for storing data that needs to be shared between containers since they can be easily attached/detached.
 
 In this project, we used named volumes mounted to host directories so that deleting the Docker volumes preserves the actual data on the host as an additional safety mechanism and for neat organization in docker-compose.yml (since they are named).
+
+---
+
+## Acknowledgements
+*I would like to thank **dperez-p** for letting me use his Inception repository as a guide.  The comments were helpful for gaining an understanding of this very novel project.  Particularly how the scripts work and what each dependency was for in the Dockerfiles.*
